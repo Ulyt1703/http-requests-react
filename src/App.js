@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react"
+import List from "./components/List.jsx"
+import axios from "axios"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+axios.defaults.baseURL = "https://hn.algolia.com/api/v1"
+
+class App extends React.Component{
+    state = {
+      stories: []
+    }
+
+    async componentDidMount(){
+      let response = await axios.get("/search?query=react")
+      this.setState({stories:response.data.hits})
+    }
+
+    render(){
+      let content;
+      if(this.state.stories.length > 0){
+        content = <List stories={this.state.stories}></List>
+      }
+      else{
+        content = <h2>Downloading...</h2>
+      }
+      return(
+        <>
+          <div>
+            {content}
+          </div>
+        </>
+      )
+    }
 }
-
-export default App;
+export default App
